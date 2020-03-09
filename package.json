@@ -1,0 +1,30 @@
+{
+  "name": "gogaradioone",
+  "version": "0.0.1",
+  "description": "Discord radio bot",
+  "main": "radioBot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoNiceElijah/GogaRadioOne.git"
+  },
+  "keywords": [
+    "radio",
+    "bot",
+    "discord"
+  ],
+  "author": "SoNiceElijah",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SoNiceElijah/GogaRadioOne/issues"
+  },
+  "homepage": "https://github.com/SoNiceElijah/GogaRadioOne#readme",
+  "dependencies": {
+    "@discordjs/opus": "^0.1.0",
+    "discord.js": "^12.0.2",
+    "ffmpeg-static": "^4.0.1",
+    "ytdl-core": "^2.0.0"
+  }
+}
