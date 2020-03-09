@@ -1,0 +1,42 @@
+html
+    head
+        <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
+        <link rel="icon" href="main.png">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        link(rel="stylesheet", href="style.css")
+        title GogaRadioOne
+    body
+        .index-page.transition#indexPage
+            .back
+            canvas.back-canvas#canvas
+
+            .box
+                .inside-box
+                    .logo
+                        .sigma
+                            .big &Sigma;
+                            .big-back &Sigma;
+                        .right
+                            .top GoGa<b>RADIO</b>
+                            .bot 
+                                .big ONE
+                                .big-back ONE
+                    .form
+                        a(target="_blank" href="https://discordapp.com/api/oauth2/authorize?client_id=686333488403972147&permissions=1408449590&scope=bot").button.discord.add-bot#addBot Add bot
+                        a.button.submit.manage#showList Playlists
+            
+            .footer-down
+                .footer
+                    ul
+                        li 
+                            a(target="_blank" href="https://github.com/SoNiceElijah/GogaRadioOne") Github
+                        li
+                            a(target="_blank" href="https://github.com/SoNiceElijah/GogaRadioOne/issues") Report 
+                        li
+                            a(target="_blank" href="https://twitter.com/yam1sha") Twitter
+
+        .list-page.deep#listPage
+            include ./site.pug
+
+
+        script(src="action.js")

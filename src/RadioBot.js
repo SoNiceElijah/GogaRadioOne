@@ -140,3 +140,5 @@ function nextSong(msg) {
     setAudio(msg);
 
 }
+
+module.exports = () => {};

@@ -1,0 +1,25 @@
+.super-box
+    .super-box-title Playlist view 
+    .super-box-name 
+        input#name(type="text", name="name" placeholder="Name" autocomplete="false", value=name)
+    .super-box-desc
+        textarea#desc(name="desc", placeholder="Description")= desc
+    .super-box-list#musicList
+        each music in playlist
+            .super-box-item(id=music.id)
+                .super-box-item-left
+                    .super-box-music-name= music.name
+                    a(href=music.link).super-box-music-link= music.link
+                .super-box-item-right
+                    .supre-box-music-remove x
+
+        .super-box-input
+            input#music(type="text", name="music", placeholder="Only youtube link")
+
+.template
+    .super-box-item(id='tmp_box')
+        .super-box-item-left
+            .super-box-music-name
+            a(target="_blank").super-box-music-link
+        .super-box-item-right
+            .supre-box-music-remove x
