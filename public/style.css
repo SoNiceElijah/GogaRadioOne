@@ -367,6 +367,7 @@ body {
     white-space: normal;
 
     height: 100px;
+    overflow: hidden;
 }
 
 .list-item-music-list {
