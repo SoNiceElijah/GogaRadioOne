@@ -1,25 +1,25 @@
-.super-box
-    .super-box-title Playlist view 
-    .super-box-name 
-        input#name(type="text", name="name" placeholder="Name" autocomplete="false", value=name)
-    .super-box-desc
-        textarea#desc(name="desc", placeholder="Description")= desc
-    .super-box-list#musicList
-        each music in playlist
-            .super-box-item(id=music.id)
-                .super-box-item-left
-                    .super-box-music-name= music.name
-                    a(href=music.link).super-box-music-link= music.link
-                .super-box-item-right
-                    .supre-box-music-remove x
+.super-box(empty=empty)
+    .super-box-left
+        .super-box-image &omega;
+        .super-box-name 
+            input#name(type="text", name="name" placeholder="Name" autocomplete="off", value=name)
+        .super-box-desc
+            textarea#desc(name="desc", placeholder="Description")= desc
 
-        .super-box-input
-            input#music(type="text", name="music", placeholder="Only youtube link")
+    if (!empty)       
+        .super-box-right
+            .super-box-list#musicList
+                each music, idx in playlist
+                    .super-box-item(id=music.id)
+                        .super-box-music-name !{(idx + 1) + '. ' +music.name}
+                        .super-box-item-overlay
+                            a(href=music.link).super-box-music-link= music.link
+                            .supre-box-music-remove(id=music._id)  x
 
-.template
-    .super-box-item(id='tmp_box')
-        .super-box-item-left
-            .super-box-music-name
-            a(target="_blank").super-box-music-link
-        .super-box-item-right
-            .supre-box-music-remove x
+            .super-box-input
+                input#music(autocomplete="off", type="text", name="music", placeholder="Only youtube link")
+                .add-to-playlist#addToPlayList(super=_id) +
+
+if (empty)
+    .super-playlist-add.button#superPlayListAdd create
+

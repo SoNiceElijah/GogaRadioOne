@@ -76,27 +76,7 @@ $('#showList').click((e) => {
     },200);
 });
 
-$('#backButton').click((e) => {
-    $('#indexPage').removeClass('none');
-    setTimeout(() => {
-        $('#indexPage').removeClass('opacity-0');
-        $('#listPage').addClass('deep');
-    },10);
-});
-
-$('.list-item').click(e => {
-    $('#overlayLoad').load('/playlist?id='+ e.currentTarget.id, (d) => {
-        console.log('With data');
-        showOverlay();
-    });
-});
-
-$('.add-playlist').click(e => {
-    $('#overlayLoad').load('/playlist', (d) => {
-        console.log('empty');
-        showOverlay();
-    });
-})
+rebind();
 
 function showOverlay() {
     $('#overlay').removeClass('none');
@@ -104,25 +84,107 @@ function showOverlay() {
         $('#overlay').removeClass('opacity-0');
     },10);
 
-    $('#music').keyup(e => {
-        if(e.key == 'Enter')
-        {
-            let url = $('#music').val();
-            $.post('/check',{
-                url : url
+
+    let createButton = $('#superPlayListAdd');
+    if(createButton)
+    {
+        createButton.click(e => {
+            $.post('/new',{
+                name : $('#name').val(),
+                desc : $('#desc').val()
             }, (d) => {
-                if(d.status)
+                if(d.status) 
                 {
-                    addMusic(d.name,url);
-                    $('#music').val('');
+                    $('#listPage').load('/listPage', () => {
+                        rebind();
+                    });
                 }
                 else
                 {
-                    $('#music').val('');
+                    createButton.html(d.msg);
+                }
+            }) 
+        })
+    }
+
+    let checked = false;
+    let name = '';
+
+    $('#music').on('change paste keyup',(e => {
+
+        
+
+        $('#addToPlayList').removeClass('green-light');
+        let url = $('#music').val();
+        if(url.indexOf('youtube') == -1)
+            return;
+
+        $.post('/check',{
+            url : url
+        }, (d) => {
+
+            if(d.status) 
+            {
+                checked = true;
+                name = d.name;
+                $('#addToPlayList').addClass('green-light');
+            }
+            else
+            {
+                console.log('no such video');
+            }
+
+        })
+
+    }));
+
+    $('#addToPlayList').click(() => {sendTrack()});
+    $('#music').keyup(e => {
+        if(e.key == 'Enter')
+        {
+           sendTrack();
+        } 
+    })
+
+    $('.supre-box-music-remove').click(e => {
+        $.post('/remove',{
+            id : e.currentTarget.id
+        },(d) => {
+            if(d.status)
+            {
+                $('#overlayLoad').load('/playlist?id='+ $('#addToPlayList').attr('super'), (d) => {
+                    showOverlay();
+                });
+            }
+            else
+            {
+                console.log('Error');
+            }
+        })
+    })
+
+    function sendTrack() {
+        if(checked) 
+        {
+            let url = $('#music').val();
+            $.post('/add',{
+                link : url,
+                name : name,
+                id : $('#addToPlayList').attr('super')
+            }, (d) => {
+                if(d.status)
+                {
+                    $('#overlayLoad').load('/playlist?id='+ $('#addToPlayList').attr('super'), (d) => {
+                        showOverlay();
+                    });
+                }
+                else
+                {
+                    console.log('Error');
                 }
             });
         }
-    })
+    }
 }
 
 function closeOverlay() {
@@ -133,18 +195,31 @@ function closeOverlay() {
     },200)
 }
 
-$('.overlay-closer').click(e => closeOverlay());
-
-function addMusic(name,link) {
-
-    $('#tmp_box .super-box-music-name').html(name);
-    $('#tmp_box .super-box-music-link').html(link);
-    $('#tmp_box .super-box-music-link').attr('href',link);
-
-    let el = $('#tmp_box').clone();
-    el.attr('id',"2222222");
 
 
-    $('#musicList #music').before(el);
+function rebind() {
+    $('.overlay-closer').click(e => closeOverlay());
+
+    
+    $('.add-playlist').click(e => {
+        $('#overlayLoad').load('/playlist', (d) => {
+            console.log('empty');
+            showOverlay();
+        });
+    });
+
+    $('#backButton').click((e) => {
+        $('#indexPage').removeClass('none');
+        setTimeout(() => {
+            $('#indexPage').removeClass('opacity-0');
+            $('#listPage').addClass('deep');
+        },10);
+    });
+    
+    $('.list-item').click(e => {
+        $('#overlayLoad').load('/playlist?id='+ e.currentTarget.id, (d) => {
+            console.log('With data');
+            showOverlay();
+        });
+    });
 }
-

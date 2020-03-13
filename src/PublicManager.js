@@ -6,6 +6,9 @@ const __maindir = require('path').dirname(require.main.filename);
 const bp = require('body-parser');
 const axios = require('axios');
 
+const $ =  require('./DataManager');
+const R = require('./RadioManager');
+
 module.exports = async () => {
     
     app.set('view engine', 'pug');
@@ -16,82 +19,33 @@ module.exports = async () => {
 
     app.get('/', async (req,res) => {
 
-        let data = [{
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Big description with a lot of words for chaeck elipsis'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'sdgsgsdgd g dsgsdgsdgsddgsdgs gsdgs  dg sdg',
-            desc : 'Smth for test'
-        },
-        {
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        },
-        {
-            id : 'dsfsfsdf',
-            name : 'SuperTest',
-            desc : 'Smth for test'
-        }];
+        let data = await $.playlists();
+
         res.render('main',{list : data});
 
+    });
+
+    app.get('/listPage', async (req,res) => {
+        let data = await $.playlists();
+        res.render('site',{list : data});
     });
 
     app.get('/playlist', async (req,res) => {
 
         if(req.query['id'])
         {
+            let data = await $.getPlaylist(req.query['id']);
+            let tracks = await $.getPlaylistTracks(req.query['id']);
+
             res.render('box',{
-                id : 'afsdfsdf',
-                name : 'LOL', 
-                desc : 'so nice playlist', 
-                playlist : [{
-                    id : 'wetwet',
-                    name : 'one',
-                    link : 'link'
-                },
-                {
-                    id : 'wetwet',
-                    name : 'two',
-                    link : 'link'
-                }]
+                empty : false,
+                ...data,
+                playlist : tracks
             });
         }
         else
         {
-            res.render('box',{name : '', desc : '', playlist : []});
+            res.render('box',{ empty : true, name : '', desc : '' });
         }
 
     });
@@ -129,8 +83,97 @@ module.exports = async () => {
        
     });
 
+    app.post('/new', async (req,res) => {
+        
+        let model = {
+            name : req.body.name,
+            desc : req.body.desc 
+        };
+
+        let playlist = await $.getPlaylistByName(req.body.name);
+
+        if(isNullOrWhitespace(req.body.name))
+        {
+            return res.json({
+                static : false,
+                msg : 'Empty name!!!!!'
+            });
+        }
+
+        if(playlist)
+            return res.json({
+                status : false,
+                msg : 'name already taken'
+            });
+
+        await $.createPlaylist(model);
+
+        res.json({
+            status : true
+        })
+
+    });
+
+    app.post('/add', async (req,res) => {
+
+        let model = {
+            name : req.body.name,
+            link : req.body.link
+        }
+
+        if(isNullOrWhitespace(model.name))
+        {
+            return res.json({
+                status : false
+            })
+        }
+
+        if(isNullOrWhitespace(model.link))
+        {
+            return res.json({
+                status : false
+            })
+        }
+
+        if(isNullOrWhitespace(req.body.id))
+        {
+            return res.json({
+                status : false
+            })
+        }
+
+        await $.addTrack(req.body.id,model);
+        R.editPlaylist(req.body.id);
+
+        return res.json({
+            status : true
+        });
+
+    });
+
+    app.post('/remove', async (req,res) => {
+        if(!req.body.id)
+            return res.json({
+                status : false
+            })
+
+        let hid = await $.removeTrack(req.body.id);
+        R.editPlaylist(hid);
+
+        res.json({
+            status : true
+        })
+    })
+
     app.listen(2000,() => {
         console.log('Public is up');
     })
 
 };
+
+function isNullOrWhitespace( input ) {
+
+    if (typeof input === 'undefined' || input == null) return true;
+
+    return input.replace(/\s/g, '').length < 1;
+}

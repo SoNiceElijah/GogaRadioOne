@@ -1,32 +1,15 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const ytdl = require('ytdl-core');
-
 const info = require('./config.json');
 
-const broadcast = client.voice.createBroadcast();
-broadcast.play('./music.mp3');
-
-let connections = {};
-let broadcasts = {};
-let playlist = {};
-let playNum = {};
+const R = require('./RadioManager');
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-
-    /*client.guilds.cache.each(g =>{
-      let voices = g.channels.cache.filter(e => e.type === 'voice');
-      voices.each(v => {
-        v.join().then(c => {
-          console.log(c);
-        })
-      })
-    }); */
 });
 
-client.on('message', msg => {
+client.on('message', async (msg) => {
 
     if (msg.author.id === client.user.id) return;
 
@@ -45,7 +28,7 @@ client.on('message', msg => {
             station.join()
                 .then((conn) => {
                     msg.channel.send(`I'm connected to ${conn.channel.name}`);
-                    connections[msg.guild.id] = conn;
+                    R.saveConnaction(conn,msg);
                 })
         } else {
 
@@ -60,7 +43,7 @@ client.on('message', msg => {
             station.join()
                 .then((conn) => {
                     msg.channel.send(`I'm connected to ${conn.channel.name}`);
-                    connections[msg.guild.id] = conn;
+                    R.saveConnaction(conn,msg);
                 })
         }
 
@@ -69,9 +52,9 @@ client.on('message', msg => {
 
     if(args[0] === 'leave')
     {
-        if(connections[msg.guild.id])
+        if(R.getConnaction(msg))
         {
-            connections[msg.guild.id].channel.leave();
+            R.getConnaction(msg).channel.leave();
             msg.channel.send('Disconnected!');
         }
 
@@ -80,19 +63,9 @@ client.on('message', msg => {
 
     if(args[0] === 'play')
     {
-        if(connections[msg.guild.id])
+        if(R.getConnaction(msg))
         {
-            if(broadcasts[msg.guild.id])
-            {
-                broadcasts[msg.guild.id].resume();
-            }
-            else
-            {
-                playNum[msg.guild.id] = 0;
-                playlist[msg.guild.id] = [];
-                playlist[msg.guild.id].push('https://www.youtube.com/watch?v=gykWYPrArbY');
-                setAudio(msg);
-            }
+            R.radioPlay(msg);
         }
 
         return;
@@ -100,45 +73,49 @@ client.on('message', msg => {
 
     if(args[0] === 'stop')
     {
-        if(broadcasts[msg.guild.id])
-            broadcasts[msg.guild.id].pause();
+        R.radioStop(msg);
+        return;
     }
 
     if(args[0] === 'next')
     {
-        if(!args[1]) return;
-        
-        playlist[msg.guild.id].push(args[1]);
+        R.addSong(msg,args);
+        return;
     }
 
     if(args[0] === '>>')
     {
-        nextSong(msg);
+        R.nextSong(msg);
+        return;
+    }
+
+    if(args[0] === '<<')
+    {
+        R.prevSong(msg);
+        return;
+    }
+
+    if(args[0] === 'manage')
+    {
+        msg.channel.send('http://165.22.91.225:2000/');
+        return;
+    }
+
+    if(args[0] === 'playlist')
+    {
+        R.setPlaylist(msg, args);
+        return;
+    }
+
+    if(args[0] == 'list')
+    {
+        R.getPlaylist(msg, args);
+        return;
     }
 });
 
 client.login(info.token);
 
-function setAudio(msg) {
 
-    console.log(`New song for ${msg.guild.name}`);
-    broadcasts[msg.guild.id] = connections[msg.guild.id].play(ytdl(playlist[msg.guild.id][playNum[msg.guild.id]],{ filter : 'audioonly'}));
-    broadcasts[msg.guild.id].on('finish',() => { nextSong(msg); });
-}
-
-function nextSong(msg) {
-
-    if(playNum[msg.guild.id] < playlist[msg.guild.id].length - 1)
-    {
-        playNum[msg.guild.id] = playNum[msg.guild.id] + 1;
-    }
-    else
-    {
-        playNum[msg.guild.id] = 0;
-    }
-
-    setAudio(msg);
-
-}
 
 module.exports = () => {};

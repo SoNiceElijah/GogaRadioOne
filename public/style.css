@@ -266,7 +266,12 @@ body {
 
     margin: 40px 40px 0 40px;
 
-    padding: 10px 0 40px 0;
+    padding: 10px 0 100px 0;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    align-items: flex-start;
 }
 
 ::-webkit-scrollbar {
@@ -318,10 +323,10 @@ body {
 
     display: inline-block;
 
-    width: 300px;
-    height: 503px;
+    width: 290px;
+    height: 142px;
 
-    line-height: 500px;
+    line-height: 132px;
     text-align: center;
 
     font-size: 80px;
@@ -476,15 +481,40 @@ body {
 
 
 .super-box {
-    width: 500px;
-    height: 600px;
-
-    border-radius: 3px;
+    width: 800px;
+    height: 500px;
     background: #f3f3f3;
 
-    overflow: auto;
+    overflow: hidden;
 
-    padding-bottom: 50px;
+    border-radius: 3px;
+}
+
+.super-box[empty="empty"] {
+    width: 300px;
+    height: 500px;
+}
+
+.super-box-left {
+
+    float: left;
+
+    width: 300px;
+    height: 100%;
+
+}
+
+.super-box-right {
+
+    float: left;
+
+    width: 499px;
+    height: 100%;
+
+    border-left: 1px solid #cdcdcd;
+
+    position: relative;
+
 }
 
 .super-box-title {
@@ -494,36 +524,126 @@ body {
 
 }
 
+.super-box-image  {
+    width: 100%;
+    height: 300px;
+
+    line-height: 300px;
+
+    user-select: none;
+
+    font-size: 120px;
+    color: #cdcdcd;
+
+    text-align: center;
+    background: #e7e7e7;
+
+    border-bottom: 1px solid #cdcdcd;
+}
+
 .super-box-name input, .super-box-desc textarea, .super-box-input input {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 16px;
 
-    border: 1px solid #cdcdcd;
-
     padding: 10px 20px 12px 20px;
-    margin: 20px 0 0 20px;
+    margin: 10px 0 0 20px;
 
-    border-radius: 3px;
     background: transparent;
     min-width: calc(100% - 40px);
     max-width: calc(100% - 40px);
+
+    border: none;
     
 }
 
+.super-box-input input {
+    max-width: calc(100% - 100px);
+    min-width: calc(100% - 100px);
+}
+
+.add-to-playlist {
+    width: 30px;
+    height: 30px;
+
+    text-align: center;
+    line-height: 28px;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    color: #cdcdcd;
+
+    user-select: none;
+
+    cursor: pointer;
+
+    margin-top: 15px;
+    margin-right: 15px;
+
+    border-radius: 5px;
+
+    float: right;
+
+    transition: 0.2s;
+}
+
+.add-to-playlist:hover  {
+    background: #cdcdcd;
+    color: #ffffff;
+}
+
+.super-box-name {
+    border-bottom: 1px solid #cdcdcd;
+    height: 59px;
+}
+
+.green-light {
+    color: #6dc981;
+}
+
+.green-light:hover {
+    background: #6dc981;
+    color: #ffffff;
+}
+
+.super-box-input {
+    height: 59px;
+    border-top: 1px solid #cdcdcd;
+} 
+
+
 .super-box-name input:focus, .super-box-desc textarea:focus, .super-box-input input:focus {
-    border: 1px solid #7289da;
     outline: none;
 }
 
 .super-box-list {
-    margin-top: 10px;
+    overflow: auto;
+    height: calc(100% - 60px);
+}
+
+.super-box-desc {
+    height: 140px;
+}
+
+.super-box-desc textarea {
+
+    resize:none;
+
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+
+    height: 100px;
 }
 
 .super-box-item {
-    border-top: 1px solid #cdcdcd;
-    padding: 10px 40px 10px 40px;
+    border-bottom: 1px solid #e0e0e0;
 
     overflow: hidden;
+
+    position: relative;
+
+    height: 40px;
 }
 
 .super-box-item-left {
@@ -534,6 +654,8 @@ body {
 .super-box-item-right {
     float: right;
     width: 20px;
+
+    cursor: pointer;
 }
 
 .supre-box-music-remove {
@@ -552,6 +674,10 @@ body {
     text-align: center;
 
     line-height: 16px;
+
+    float: right;
+
+    margin: 10px 10px 0 0 ;
 }
 
 .supre-box-music-remove:hover {
@@ -561,23 +687,73 @@ body {
 }
 
 .super-box-music-name {
-    font-weight: 600;
-    text-overflow: ellipsis;
 
+    padding: 10px 40px 10px 40px;
+
+    text-overflow: ellipsis;
     height: 19px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+}
+
+.super-box-item-overlay {
+    background: #e0e0e0;
+}
+
+.super-box-item .super-box-item-overlay {
+    display: none;
+}
+
+.super-box-item:hover .super-box-music-name {
+    display: none;
+}
+
+.super-box-item:hover .super-box-item-overlay {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
 }
 
 .super-box-music-link {
     font-weight: 300;
     cursor: pointer;
 
+    display: block;
+
     height: 19px;
 
-    color: #3091b8;
+    color: #e63d76;
 
     text-overflow: ellipsis;
     text-decoration: none;
+
+    padding: 10px 40px 10px 40px;
+    width: calc(100% - 120px);
+
+    float: left;
 }
+
+.super-playlist-add {
+    width : 300px;
+    margin-top: 10px;
+
+    background: #7ad38d;
+    color: #ffffff;
+}
+
+.super-playlist-add:hover {
+    background: #61af72;
+}
+
+
 
 .template {
     display: none;
